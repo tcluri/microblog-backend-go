@@ -1,0 +1,397 @@
+#+title: Rest requests
+* Requests - Social media backend
+** Create and test user end points
+*** USER: Test(empty user) the localhost request
+#+begin_src restclient
+GET http://localhost:8080/
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "createdAt": "0001-01-01T00:00:00Z",
+  "email": "test@example.com",
+  "password": "",
+  "name": "",
+  "age": 0
+}
+// GET http://localhost:8080/
+// HTTP/1.1 200 OK
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 09:54:31 GMT
+// Content-Length: 95
+// Request duration: 0.006339s
+#+END_SRC
+
+
+*** USER: Test the GET request(before user implementation) on localhost
+Returns a method not supported error message. This is before
+the method implementations at "/user"
+#+begin_src restclient
+GET http://localhost:8080/user
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "error": "method not supported"
+}
+// GET http://localhost:8080/users
+// HTTP/1.1 400 Bad Request
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 09:51:08 GMT
+// Content-Length: 32
+// Request duration: 0.002017s
+#+END_SRC
+
+*** USER: Test the POST request on localhost -- CREATING
+#+begin_src restclient
+POST http://localhost:8080/users/john@example.com
+Content-Type: application/json
+
+{
+    "email": "john@example.com",
+    "password": "12345",
+    "name": "john doe",
+    "age": 18
+}
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "createdAt": "2022-11-06T09:54:38.89363008Z",
+  "email": "john@example.com",
+  "password": "12345",
+  "name": "john doe",
+  "age": 18
+}
+// POST http://localhost:8080/users/john@example.com
+// HTTP/1.1 201 Created
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 09:54:38 GMT
+// Content-Length: 118
+// Request duration: 0.001988s
+#+END_SRC
+
+#+begin_src restclient
+POST http://localhost:8080/users/adam@example.com
+Content-Type: application/json
+
+{
+    "email": "adam@example.com",
+    "password": "666",
+    "name": "adam smith",
+    "age": 40
+}
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "createdAt": "2022-11-06T09:54:47.057120035Z",
+  "email": "adam@example.com",
+  "password": "666",
+  "name": "adam smith",
+  "age": 40
+}
+// POST http://localhost:8080/users/adam@example.com
+// HTTP/1.1 201 Created
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 09:54:47 GMT
+// Content-Length: 119
+// Request duration: 0.002786s
+#+END_SRC
+
+#+begin_src restclient
+POST http://localhost:8080/users/tim@example.com
+Content-Type: application/json
+
+{
+    "email": "tim@example.com",
+    "password": "timpass001",
+    "name": "tim ford",
+    "age": 40
+}
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "createdAt": "2022-11-06T09:58:11.078622544Z",
+  "email": "tim@example.com",
+  "password": "timpass001",
+  "name": "tim ford",
+  "age": 40
+}
+// POST http://localhost:8080/users/tim@example.com
+// HTTP/1.1 201 Created
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 09:58:11 GMT
+// Content-Length: 123
+// Request duration: 0.002145s
+#+END_SRC
+
+*** USER: Test the GET request on localhost -- GETTING(info)
+With adam@example.com
+#+begin_src restclient
+GET http://localhost:8080/users/adam@example.com
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "createdAt": "2022-11-06T09:54:47.057120035Z",
+  "email": "adam@example.com",
+  "password": "666",
+  "name": "adam smith",
+  "age": 40
+}
+// GET http://localhost:8080/users/adam@example.com
+// HTTP/1.1 200 OK
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 09:54:55 GMT
+// Content-Length: 119
+// Request duration: 0.002303s
+#+END_SRC
+
+With john@example.com
+#+begin_src restclient
+GET http://localhost:8080/users/john@example.com
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "createdAt": "2022-11-06T09:54:38.89363008Z",
+  "email": "john@example.com",
+  "password": "12345",
+  "name": "john doe",
+  "age": 18
+}
+// GET http://localhost:8080/users/john@example.com
+// HTTP/1.1 200 OK
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 09:55:01 GMT
+// Content-Length: 118
+// Request duration: 0.004713s
+#+END_SRC
+*** USER: Test the PUT request on localhost -- UPDATING
+Updating test@example.com to have new password and new name
+#+begin_src restclient
+PUT http://localhost:8080/users/john@example.com
+Content-Type: application/json
+
+{
+    "email": "john@example.com",
+    "password": "changedByPUT",
+    "name": "john doe",
+    "age": 30
+}
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "createdAt": "2022-11-06T09:54:38.89363008Z",
+  "email": "john@example.com",
+  "password": "changedByPUT",
+  "name": "john doe",
+  "age": 30
+}
+// PUT http://localhost:8080/users/john@example.com
+// HTTP/1.1 200 OK
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 09:58:27 GMT
+// Content-Length: 125
+// Request duration: 0.002251s
+#+END_SRC
+
+
+Testing the GET request on localhost for Tim
+#+begin_src restclient
+GET http://localhost:8080/users/john@example.com
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "createdAt": "2022-11-06T09:54:38.89363008Z",
+  "email": "john@example.com",
+  "password": "changedByPUT",
+  "name": "john doe",
+  "age": 30
+}
+// GET http://localhost:8080/users/john@example.com
+// HTTP/1.1 200 OK
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 09:58:34 GMT
+// Content-Length: 125
+// Request duration: 0.004681s
+#+END_SRC
+
+*** USER: Test the DELETE request on localhost -- DELETION
+Deleting adam@example.com from the database
+#+begin_src restclient
+DELETE http://localhost:8080/users/adam@example.com
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+{}
+// DELETE http://localhost:8080/users/adam@example.com
+// HTTP/1.1 200 OK
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 09:58:54 GMT
+// Content-Length: 2
+// Request duration: 0.004017s
+#+END_SRC
+
+Testing the deletion of adam@example.com has been successfully deleted
+#+begin_src restclient
+GET http://localhost:8080/users/adam@example.com
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+// GET http://localhost:8080/users/adam@example.com
+// HTTP/1.1 200 OK
+// Date: Sun, 06 Nov 2022 09:58:59 GMT
+// Content-Length: 0
+// Request duration: 0.004559s
+#+END_SRC
+
+** Create and test User Post endpoints
+*** USER POSTS: Create a post request for a user
+#+begin_src restclient
+POST http://localhost:8080/posts/
+Content-Type: application/json
+
+{
+    "userEmail": "tim@example.com",
+    "text": "the quick brown fox jumped over the fence"
+}
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": "81def6d1-1c97-4167-bf41-cefc25feca67",
+  "createdAt": "2022-11-06T09:59:18.22811138Z",
+  "userEmail": "tim@example.com",
+  "text": "the quick brown fox jumped over the fence"
+}
+// POST http://localhost:8080/posts/
+// HTTP/1.1 201 Created
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 09:59:18 GMT
+// Content-Length: 170
+// Request duration: 0.001931s
+#+END_SRC
+
+#+begin_src restclient
+POST http://localhost:8080/posts/
+Content-Type: application/json
+
+{
+    "userEmail": "tim@example.com",
+    "text": "Another friend of huckleberry fin, apart from Tom!"
+}
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": "0b4c37f1-f419-4ed8-9728-52998c4dafd2",
+  "createdAt": "2022-11-06T10:00:24.019593818Z",
+  "userEmail": "tim@example.com",
+  "text": "Another friend of huckleberry fin, apart from Tom!"
+}
+// POST http://localhost:8080/posts/
+// HTTP/1.1 201 Created
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 10:00:24 GMT
+// Content-Length: 180
+// Request duration: 0.002446s
+#+END_SRC
+
+#+begin_src restclient
+POST http://localhost:8080/posts/
+Content-Type: application/json
+
+{
+    "userEmail": "john@example.com",
+    "text": "The lord of the rings is an amazing movie series!"
+}
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+{
+  "id": "13c1ca18-c726-418f-9fe5-4bdf191f4537",
+  "createdAt": "2022-11-06T10:02:59.451659422Z",
+  "userEmail": "john@example.com",
+  "text": "The lord of the rings is an amazing movie series!"
+}
+// POST http://localhost:8080/posts/
+// HTTP/1.1 201 Created
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 10:02:59 GMT
+// Content-Length: 180
+// Request duration: 0.003004s
+#+END_SRC
+
+*** USER POSTS: DELETE request for a user's post
+A DELETE request on existing post from Tim by using post id.
+#+begin_src restclient
+DELETE http://localhost:8080/posts/81def6d1-1c97-4167-bf41-cefc25feca67
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+{}
+// DELETE http://localhost:8080/posts/81def6d1-1c97-4167-bf41-cefc25feca67
+// HTTP/1.1 200 OK
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 10:09:54 GMT
+// Content-Length: 2
+// Request duration: 0.005294s
+#+END_SRC
+
+*** USER POSTS: GET request to retrieve a user's post
+#+begin_src restclient
+GET http://localhost:8080/posts?userEmail=john@example.com
+#+end_src
+
+#+RESULTS:
+#+BEGIN_SRC js
+[
+  {
+    "id": "13c1ca18-c726-418f-9fe5-4bdf191f4537",
+    "createdAt": "2022-11-06T10:02:59.451659422Z",
+    "userEmail": "john@example.com",
+    "text": "The lord of the rings is an amazing movie series!"
+  }
+]
+// GET http://localhost:8080/posts?userEmail=john@example.com
+// HTTP/1.1 200 OK
+// Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE
+// Content-Type: application/json
+// Date: Sun, 06 Nov 2022 11:00:14 GMT
+// Content-Length: 182
+// Request duration: 0.001765s
+#+END_SRC
